@@ -1,3 +1,5 @@
+#Par Martin Couture
+#Description disponible sur YouTube: 
 from osgeo import ogr,osr,gdal
 gdal.UseExceptions()
 
