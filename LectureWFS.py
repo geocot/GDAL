@@ -1,5 +1,5 @@
 #Par Martin Couture
-#Description disponible sur YouTube: 
+#Description disponible sur YouTube: https://youtu.be/4BJFQ7A40QQ
 from osgeo import ogr,osr,gdal
 gdal.UseExceptions()
 
