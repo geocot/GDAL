@@ -1,0 +1,41 @@
+#Martin Couture
+#Vidéo explicative ici : https://youtu.be/-x6hMYclHKU
+
+from osgeo import gdal, osr, ogr
+gdal.UseExceptions()
+
+#Couche base
+inShapefile = "vdq-arrondissement.shp"
+inDriver = ogr.GetDriverByName('ESRI Shapefile')
+inDataSource = inDriver.Open(inShapefile,0)
+inLayer = inDataSource.GetLayer()
+
+#Couche sortie
+outShapefile = "vdq-arrondissement-Cent.shp"
+outDriver = ogr.GetDriverByName('ESRI Shapefile')
+
+#Création shapefile out
+outDataSource = outDriver.CreateDataSource(outShapefile)
+outLayer = outDataSource.CreateLayer("vdq-arrondissement-Cent", geom_type=ogr.wkbPoint)
+
+#Création des champs à partir des champs du inShapefile
+inLayerDefn = inLayer.GetLayerDefn()
+for i in range(0,inLayerDefn.GetFieldCount()):
+    fieldDefn = inLayerDefn.GetFieldDefn(i)
+    outLayer.CreateField(fieldDefn)
+
+outLayerDefn = outLayer.GetLayerDefn()
+
+#Ajout entités
+for i in range(0, inLayer.GetFeatureCount()):
+    inFeature = inLayer.GetFeature(i)
+    geom = inFeature.GetGeometryRef()
+    centroide = geom.Centroid()
+
+    outFeature = ogr.Feature(outLayerDefn)
+    outFeature.SetGeometry(centroide)
+
+    for i in range (0, outLayerDefn.GetFieldCount()):
+        outFeature.SetField(outLayerDefn.GetFieldDefn(i).GetNameRef(), inFeature.GetField(i))
+    outLayer.CreateFeature(outFeature)
+
